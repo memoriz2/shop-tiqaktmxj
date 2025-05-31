@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import ProductForm from "./ProductForm";
 
 type Product = {
     id: number;
@@ -11,7 +10,7 @@ type Product = {
 };
 
 function ProductList() {
-    const [products, setProducts] = useState<Product[]>([]);
+    const [products] = useState<Product[]>([]);
     const navigate = useNavigate();
 
     const handleEdit = (productId: number) => {

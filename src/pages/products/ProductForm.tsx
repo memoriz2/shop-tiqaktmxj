@@ -21,41 +21,11 @@ const INITIAL_PRODUCT: Product = {
     description: "",
 };
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/gif"];
-
 function ProductForm() {
     const [product, setProduct] = useState<Product>(INITIAL_PRODUCT);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [error, setError] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-    // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const files = e.target.files;
-    //     if (!files) return;
-
-    //     const newFiles = Array.from(files);
-
-    //     // 파일 크기 및 형식 검사
-    //     const invalidFiles = newFiles.filter(
-    //         (file) =>
-    //             !ALLOWED_FILE_TYPES.includes(file.type) ||
-    //             file.size > MAX_FILE_SIZE
-    //     );
-
-    //     if (invalidFiles.length > 0) {
-    //         setError(
-    //             "이미지는 5MB 이하의 JPG, PNG, GIF 파일만 업로드 가능합니다."
-    //         );
-    //         return;
-    //     }
-
-    //     const newPreviewUrls = newFiles.map((file) =>
-    //         URL.createObjectURL(file)
-    //     );
-    //     setPreviewUrls((prev) => [...prev, ...newPreviewUrls]);
-    //     setError("");
-    // };
 
     const handleRemoveImage = (index: number) => {
         setPreviewUrls((prev) => {
