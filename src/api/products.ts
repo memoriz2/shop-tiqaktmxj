@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://aladin-chat-server.onrender.com";
+const API_BASE_URL = "https://shop-spring.onrender.com";
 
 export interface Product {
     productId: number | null;
