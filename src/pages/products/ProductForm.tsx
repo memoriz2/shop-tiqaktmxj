@@ -1,7 +1,8 @@
 import { useState } from "react";
 // import { uploadImage } from '../../api/upload'; // 백엔드 API 준비되면 주석 해제
 import styles from "./ProductForm.module.css";
-import CloudinaryUploadButton from "../../components/CloudinaryUploadButton"; // 경로는 실제 위치에 맞게 수정
+import CloudinaryUploadButton from "../../components/CloudinaryUploadButton";
+import { createProduct } from "../../api/products";
 
 type Product = {
     productId: number | null;
@@ -71,7 +72,14 @@ function ProductForm() {
             }
 
             // TODO: API 호출 로직 추가
-            console.log("제출된 데이터:", product);
+            // console.log("제출된 데이터:", product);
+            await createProduct({
+                productName: product.productName,
+                price: Number(product.price),
+                stock: Number(product.stock),
+                productPhoto: product.productPhoto,
+                description: product.description,
+            });
 
             // 성공 시 폼 초기화
             handleCancel();
