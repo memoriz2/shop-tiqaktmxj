@@ -16,13 +16,26 @@ export const createProduct = async (product: Omit<Product, "productId">) => {
         console.log("전송할 데이터:", product); // 요청 데이터 확인
         const response = await axios.post(
             `${API_BASE_URL}/api/products`,
-            product
+            product,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                withCredentials: true, // 쿠키/인증 정보 포함
+            }
         );
         console.log("응답 데이터:", response.data); // 응답 데이터 확인
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
             console.error("API 에러:", error.response?.data); // 에러 상세 정보 확인
+            console.error("요청 설정:", {
+                url: `${API_BASE_URL}/api/products`,
+                method: "POST",
+                headers: error.config?.headers,
+                data: product,
+            });
             throw new Error(
                 error.response?.data?.message || "상품 등록에 실패했습니다."
             );
