@@ -11,6 +11,16 @@ export interface Product {
     description: string;
 }
 
+export const getProducts = async () => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/api/products`);
+        return response.data;
+    } catch (error) {
+        console.error("상품 목록 조회 실패:", error);
+        throw error;
+    }
+};
+
 export const createProduct = async (product: Omit<Product, "productId">) => {
     try {
         console.log("전송할 데이터:", product); // 요청 데이터 확인
