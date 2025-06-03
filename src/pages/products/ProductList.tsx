@@ -91,18 +91,28 @@ function ProductList() {
                     {products.map((product) => (
                         <tr key={product.productId}>
                             <td>
-                                <img
-                                    src={product.thumbnail}
-                                    alt={product.productName}
-                                    style={{
-                                        width: "80px",
-                                        height: "80px",
-                                        objectFit: "cover",
-                                        borderRadius: "4px",
-                                    }}
-                                />
+                                <Link
+                                    to={`/products/edit/${product.productId}`}
+                                >
+                                    <img
+                                        src={product.thumbnail}
+                                        alt={product.productName}
+                                        style={{
+                                            width: "80px",
+                                            height: "80px",
+                                            objectFit: "cover",
+                                            borderRadius: "4px",
+                                        }}
+                                    />
+                                </Link>
                             </td>
-                            <td>{product.productName}</td>
+                            <td>
+                                <Link
+                                    to={`/products/edit/${product.productId}`}
+                                >
+                                    {product.productName}
+                                </Link>
+                            </td>
                             <td>{product.stock}개</td>
                             <td>{product.price.toLocaleString()}원</td>
                             <td>
