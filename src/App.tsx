@@ -2,8 +2,11 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import ProductList from "./pages/products/ProductList";
 import "./App.css";
 import ProductForm from "./pages/products/ProductForm";
+import { useParams } from "react-router-dom";
 
 function App() {
+    const { productId } = useParams();
+
     return (
         <Router>
             <div className="admin-layout">
@@ -45,7 +48,7 @@ function App() {
                                 element={<ProductForm />}
                             />
                             <Route
-                                path="/products/edit/:id"
+                                path={`/products/edit/:${productId}`}
                                 element={<ProductForm />}
                             />
                         </Routes>

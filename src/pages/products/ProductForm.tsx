@@ -1,8 +1,10 @@
-import { useState } from "react";
-// import { uploadImage } from '../../api/upload'; // 백엔드 API 준비되면 주석 해제
+import { useEffect, useState } from "react";
 import styles from "./ProductForm.module.css";
 import CloudinaryUploadButton from "../../components/CloudinaryUploadButton";
-import { createProduct, Product } from "../../api/products";
+import { createProduct, Product, updateProduct } from "../../api/products";
+import { useParams, useNavigate } from "react-router-dom";
+const { productId } = useParams();
+import { getProductById } from "../../api/products";
 
 type CloudinaryInfo = {
     secure_url: string;
@@ -26,6 +28,8 @@ function ProductForm() {
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [error, setError] = useState<string>("");
     const [isSubmitting] = useState(false);
+    const isEdit = productId;
+    const navigate = useNavigate();
 
     const handleRemoveImage = (index: number) => {
         setPreviewUrls((prev) => {
@@ -92,10 +96,16 @@ function ProductForm() {
         }
 
         try {
-            await createProduct(product);
-            alert("상품이 성공적으로 등록되었습니다.");
+            if (isEdit) {
+                await updateProduct(productId, product);
+                alert("상품이 성공적으로 수정되었습니다.");
+            } else {
+                await createProduct(product);
+                alert("상품이 성공적으로 등록되었습니다.");
+            }
             setProduct(INITIAL_PRODUCT);
             setPreviewUrls([]);
+            navigate("/products");
         } catch (error) {
             console.error("상품 등록 실패:", error);
             alert("상품 등록에 실패했습니다.");
@@ -108,9 +118,22 @@ function ProductForm() {
         setError("");
     };
 
+    useEffect(() => {
+        if (isEdit) {
+            // 상품 정보 불러오기
+            const fetchProduct = async () => {
+                const data = await getProductById(productId);
+                setProduct(data);
+            };
+            fetchProduct();
+        }
+    }, [isEdit, productId]);
+
     return (
         <div className={styles.form}>
-            <h2 className={styles.formTitle}>상품 등록</h2>
+            <h2 className={styles.formTitle}>
+                {isEdit ? "상품 수정" : "상품 등록"}
+            </h2>
             {error && <div className={styles.error}>{error}</div>}
             <form onSubmit={handleSubmit}>
                 <div className={styles.formList}>
@@ -256,7 +279,7 @@ function ProductForm() {
                         className={styles.submitButton}
                         disabled={isSubmitting}
                     >
-                        {isSubmitting ? "저장 중..." : "저장"}
+                        {isEdit ? "수정" : isSubmitting ? "저장 중..." : "저장"}
                     </button>
                     <button
                         type="button"

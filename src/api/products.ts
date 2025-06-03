@@ -82,3 +82,28 @@ export const deleteProduct = async (productId: number) => {
         throw error;
     }
 };
+
+export const getProductById = async (productId: string | number) => {
+    const response = await axios.get(
+        `${API_BASE_URL}/api/products/${productId}`
+    );
+    return response.data;
+};
+
+export const updateProduct = async (
+    productId: string | number,
+    product: Product
+) => {
+    const response = await axios.put(
+        `${API_BASE_URL}/api/products/${productId}`,
+        product,
+        {
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            withCredentials: true,
+        }
+    );
+    return response.data;
+};
