@@ -124,6 +124,10 @@ function ProductForm() {
             const fetchProduct = async () => {
                 const data = await getProductById(productId);
                 setProduct(data);
+                // 상품 이미지 미리보기 세팅
+                setPreviewUrls(
+                    data.productPhoto.map((img: { url: string }) => img.url)
+                );
             };
             fetchProduct();
         }
