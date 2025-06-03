@@ -192,9 +192,9 @@ function ProductForm() {
                             <div className={styles.thumbnailInput}>
                                 <input
                                     type="text"
-                                    value={product.thumbnail}
+                                    value={product.thumbnailName}
                                     onChange={handleInputChange}
-                                    placeholder="썸네일 이미지 URL"
+                                    placeholder="썸네일 이미지 원본 파일명"
                                     className={styles.formInput}
                                 />
                                 <CloudinaryUploadButton
@@ -219,6 +219,18 @@ function ProductForm() {
                                             alt={`미리보기 ${index + 1}`}
                                             className={styles.previewImage}
                                         />
+                                        <div
+                                            style={{
+                                                fontSize: "12px",
+                                                marginTop: "4px",
+                                                textAlign: "center",
+                                            }}
+                                        >
+                                            {
+                                                product.productPhoto[index]
+                                                    ?.filename
+                                            }
+                                        </div>
                                         <button
                                             type="button"
                                             onClick={() =>
