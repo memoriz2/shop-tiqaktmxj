@@ -25,7 +25,7 @@ function ProductForm() {
     const [product, setProduct] = useState<Product>(INITIAL_PRODUCT);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [error, setError] = useState<string>("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSubmitting] = useState(false);
 
     const handleRemoveImage = (index: number) => {
         setPreviewUrls((prev) => {
