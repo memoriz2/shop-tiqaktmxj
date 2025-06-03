@@ -92,7 +92,7 @@ function ProductList() {
                         <tr key={product.productId}>
                             <td>
                                 <img
-                                    src={product.productPhoto[0]}
+                                    src={product.thumbnail}
                                     alt={product.productName}
                                 />
                             </td>

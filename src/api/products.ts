@@ -8,6 +8,7 @@ export interface Product {
     price: number;
     stock: number;
     productPhoto: string[];
+    thumbnail: string; // 대표 이미지 URL
     description: string;
 }
 

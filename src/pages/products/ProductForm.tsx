@@ -11,6 +11,7 @@ type Product = {
     stock: number | "";
     productPhoto: string[];
     description: string;
+    thumbnail: string;
 };
 
 const INITIAL_PRODUCT: Product = {
@@ -20,6 +21,7 @@ const INITIAL_PRODUCT: Product = {
     stock: "",
     productPhoto: [],
     description: "",
+    thumbnail: "",
 };
 
 function ProductForm() {
@@ -54,6 +56,15 @@ function ProductForm() {
         }));
     };
 
+    const handleThumbnailUpload = (info: CloudinaryInfo | CloudinaryInfo[]) => {
+        if (!Array.isArray(info)) {
+            setProduct((prev) => ({
+                ...prev,
+                thumbnail: info.secure_url,
+            }));
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
@@ -78,6 +89,7 @@ function ProductForm() {
                 price: Number(product.price),
                 stock: Number(product.stock),
                 productPhoto: product.productPhoto,
+                thumbnail: product.thumbnail,
                 description: product.description,
             });
 
@@ -188,7 +200,28 @@ function ProductForm() {
                         />
                     </div>
                     <div className={styles.formItem}>
-                        <label className={styles.formLabel}>사진</label>
+                        <label className={styles.formLabel}>
+                            썸네일 이미지
+                        </label>
+                        <div className={styles.formInput}>
+                            {product.thumbnail && (
+                                <div className={styles.thumbnailPreview}>
+                                    <img
+                                        src={product.thumbnail}
+                                        alt="썸네일 미리보기"
+                                        className={styles.thumbnailImage}
+                                    />
+                                </div>
+                            )}
+                            <CloudinaryUploadButton
+                                onUpload={handleThumbnailUpload}
+                                buttonText="썸네일 이미지 업로드"
+                                multiple={false}
+                            />
+                        </div>
+                    </div>
+                    <div className={styles.formItem}>
+                        <label className={styles.formLabel}>상품 이미지</label>
                         <div className={styles.formInput}>
                             <div className={styles.imagePreview}>
                                 {previewUrls.map((url, index) => (
@@ -215,6 +248,7 @@ function ProductForm() {
                             </div>
                             <CloudinaryUploadButton
                                 onUpload={handleCloudinaryUpload}
+                                buttonText="상품 이미지 업로드"
                             />
                         </div>
                     </div>
