@@ -94,6 +94,12 @@ function ProductList() {
                                 <img
                                     src={product.thumbnail}
                                     alt={product.productName}
+                                    style={{
+                                        width: "80px",
+                                        height: "80px",
+                                        objectFit: "cover",
+                                        borderRadius: "4px",
+                                    }}
                                 />
                             </td>
                             <td>{product.productName}</td>
