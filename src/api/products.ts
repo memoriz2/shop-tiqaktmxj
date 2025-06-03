@@ -7,8 +7,13 @@ export interface Product {
     productName: string;
     price: number;
     stock: number;
-    productPhoto: string[];
+    productPhoto: Array<{
+        url: string;
+        filename: string;
+    }>;
     thumbnail: string; // 대표 이미지 URL
+    thumbnailName: string; // 대표 이미지 원본 파일명
+    photoName: string[]; // 상품 이미지 원본 파일명 배열
     description: string;
 }
 

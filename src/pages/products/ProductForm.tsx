@@ -2,26 +2,23 @@ import { useState } from "react";
 // import { uploadImage } from '../../api/upload'; // 백엔드 API 준비되면 주석 해제
 import styles from "./ProductForm.module.css";
 import CloudinaryUploadButton from "../../components/CloudinaryUploadButton";
-import { createProduct } from "../../api/products";
+import { createProduct, Product } from "../../api/products";
 
-type Product = {
-    productId: number | null;
-    productName: string;
-    price: number | "";
-    stock: number | "";
-    productPhoto: string[];
-    description: string;
-    thumbnail: string;
+type CloudinaryInfo = {
+    secure_url: string;
+    original_filename: string;
 };
 
 const INITIAL_PRODUCT: Product = {
     productId: null,
     productName: "",
-    price: "",
-    stock: "",
+    price: 0,
+    stock: 0,
     productPhoto: [],
-    description: "",
     thumbnail: "",
+    thumbnailName: "",
+    photoName: [],
+    description: "",
 };
 
 function ProductForm() {
@@ -42,17 +39,26 @@ function ProductForm() {
         }));
     };
 
-    type CloudinaryInfo = { secure_url: string };
     const handleCloudinaryUpload = (
         info: CloudinaryInfo | CloudinaryInfo[]
     ) => {
-        const urls = Array.isArray(info)
-            ? info.map((img) => img.secure_url)
-            : [info.secure_url];
-        setPreviewUrls((prev) => [...prev, ...urls]);
+        const images = Array.isArray(info) ? info : [info];
+        const newImages = images.map((img) => ({
+            url: img.secure_url,
+            filename: img.original_filename,
+        }));
+
+        setPreviewUrls((prev) => [
+            ...prev,
+            ...images.map((img) => img.secure_url),
+        ]);
         setProduct((prev) => ({
             ...prev,
-            productPhoto: [...prev.productPhoto, ...urls],
+            productPhoto: [...prev.productPhoto, ...newImages],
+            photoName: [
+                ...prev.photoName,
+                ...images.map((img) => img.original_filename),
+            ],
         }));
     };
 
@@ -61,46 +67,38 @@ function ProductForm() {
             setProduct((prev) => ({
                 ...prev,
                 thumbnail: info.secure_url,
+                thumbnailName: info.original_filename,
             }));
         }
     };
 
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const { name, value } = e.target;
+        setProduct((prev) => ({
+            ...prev,
+            [name]:
+                name === "price" || name === "stock" ? Number(value) : value,
+        }));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
-        setIsSubmitting(true);
+
+        if (!product.productName || product.price <= 0 || product.stock < 0) {
+            alert("모든 필드를 올바르게 입력해주세요.");
+            return;
+        }
 
         try {
-            // 유효성 검사
-            if (!product.productName.trim()) {
-                throw new Error("상품명을 입력해주세요");
-            }
-            if (product.price === "" || Number(product.price) <= 0) {
-                throw new Error("가격을 올바르게 입력해주세요");
-            }
-            if (product.stock === "" || Number(product.stock) < 0) {
-                throw new Error("재고를 올바르게 입력해주세요");
-            }
-
-            // TODO: API 호출 로직 추가
-            // console.log("제출된 데이터:", product);
-            await createProduct({
-                productName: product.productName,
-                price: Number(product.price),
-                stock: Number(product.stock),
-                productPhoto: product.productPhoto,
-                thumbnail: product.thumbnail,
-                description: product.description,
-            });
-
-            // 성공 시 폼 초기화
-            handleCancel();
-        } catch (err) {
-            setError(
-                err instanceof Error ? err.message : "오류가 발생했습니다"
-            );
-        } finally {
-            setIsSubmitting(false);
+            await createProduct(product);
+            alert("상품이 성공적으로 등록되었습니다.");
+            setProduct(INITIAL_PRODUCT);
+            setPreviewUrls([]);
+        } catch (error) {
+            console.error("상품 등록 실패:", error);
+            alert("상품 등록에 실패했습니다.");
         }
     };
 
@@ -128,12 +126,7 @@ function ProductForm() {
                             id="productName"
                             name="productName"
                             value={product.productName}
-                            onChange={(e) =>
-                                setProduct({
-                                    ...product,
-                                    productName: e.target.value,
-                                })
-                            }
+                            onChange={handleInputChange}
                             className={styles.formInput}
                         />
                     </div>
@@ -146,15 +139,9 @@ function ProductForm() {
                             id="price"
                             name="price"
                             value={product.price}
-                            onChange={(e) =>
-                                setProduct({
-                                    ...product,
-                                    price:
-                                        e.target.value === ""
-                                            ? ""
-                                            : Number(e.target.value),
-                                })
-                            }
+                            onChange={handleInputChange}
+                            placeholder="가격"
+                            required
                             className={styles.formInput}
                         />
                     </div>
@@ -167,15 +154,9 @@ function ProductForm() {
                             id="stock"
                             name="stock"
                             value={product.stock}
-                            onChange={(e) =>
-                                setProduct({
-                                    ...product,
-                                    stock:
-                                        e.target.value === ""
-                                            ? ""
-                                            : Number(e.target.value),
-                                })
-                            }
+                            onChange={handleInputChange}
+                            placeholder="재고"
+                            required
                             className={styles.formInput}
                         />
                     </div>
@@ -190,12 +171,7 @@ function ProductForm() {
                             id="description"
                             name="description"
                             value={product.description}
-                            onChange={(e) =>
-                                setProduct({
-                                    ...product,
-                                    description: e.target.value,
-                                })
-                            }
+                            onChange={handleInputChange}
                             className={styles.formInput}
                         />
                     </div>
@@ -217,12 +193,7 @@ function ProductForm() {
                                 <input
                                     type="text"
                                     value={product.thumbnail}
-                                    onChange={(e) =>
-                                        setProduct({
-                                            ...product,
-                                            thumbnail: e.target.value,
-                                        })
-                                    }
+                                    onChange={handleInputChange}
                                     placeholder="썸네일 이미지 URL"
                                     className={styles.formInput}
                                 />
