@@ -3,7 +3,6 @@ import styles from "./ProductForm.module.css";
 import CloudinaryUploadButton from "../../components/CloudinaryUploadButton";
 import { createProduct, Product, updateProduct } from "../../api/products";
 import { useParams, useNavigate } from "react-router-dom";
-const { productId } = useParams();
 import { getProductById } from "../../api/products";
 
 type CloudinaryInfo = {
