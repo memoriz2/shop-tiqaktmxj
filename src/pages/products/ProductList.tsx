@@ -1,22 +1,7 @@
 import { useState, useEffect } from "react";
-import { getProducts, Product } from "../../api/products";
+import { getProducts, Product, deleteProduct } from "../../api/products";
 import { Link, useNavigate } from "react-router-dom";
-import Modal from "react-modal";
 import { Modal as MuiModal, Box, Button, Typography } from "@mui/material";
-
-// React Modal 스타일
-const customStyles = {
-    content: {
-        top: "50%",
-        left: "50%",
-        right: "auto",
-        bottom: "auto",
-        marginRight: "-50%",
-        transform: "translate(-50%, -50%)",
-        padding: "20px",
-        borderRadius: "8px",
-    },
-};
 
 // Material-UI Modal 스타일
 const style = {
@@ -36,15 +21,10 @@ function ProductList() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
-    // React Modal 상태
-    const [isReactModalOpen, setIsReactModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProductId, setSelectedProductId] = useState<number | null>(
         null
     );
-
-    // Material-UI Modal 상태
-    const [isMuiModalOpen, setIsMuiModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -65,29 +45,25 @@ function ProductList() {
         navigate(`/products/edit/${productId}`);
     };
 
-    // React Modal 삭제 처리
-    const handleDeleteWithReactModal = (productId: number) => {
+    const handleDeleteClick = (productId: number) => {
         setSelectedProductId(productId);
-        setIsReactModalOpen(true);
-    };
-
-    // Material-UI Modal 삭제 처리
-    const handleDeleteWithMuiModal = (productId: number) => {
-        setSelectedProductId(productId);
-        setIsMuiModalOpen(true);
+        setIsModalOpen(true);
     };
 
     const handleDelete = async () => {
         if (selectedProductId) {
             try {
-                // TODO: 삭제 API 호출
+                // 1. API 호출
+                await deleteProduct(selectedProductId);
+                // 2. 성공 시 처리
                 setProducts(
                     products.filter((p) => p.productId !== selectedProductId)
                 );
-                setIsReactModalOpen(false);
-                setIsMuiModalOpen(false);
+                setIsModalOpen(false);
             } catch (error) {
+                // 3. 실패 시 처리
                 console.error("상품 삭제 실패:", error);
+                setError("상품 삭제 실패");
             }
         }
     };
@@ -133,21 +109,12 @@ function ProductList() {
                                 </button>
                                 <button
                                     onClick={() =>
-                                        handleDeleteWithReactModal(
+                                        handleDeleteClick(
                                             product.productId || 0
                                         )
                                     }
                                 >
-                                    React Modal로 삭제
-                                </button>
-                                <button
-                                    onClick={() =>
-                                        handleDeleteWithMuiModal(
-                                            product.productId || 0
-                                        )
-                                    }
-                                >
-                                    MUI Modal로 삭제
+                                    삭제
                                 </button>
                             </td>
                         </tr>
@@ -155,28 +122,8 @@ function ProductList() {
                 </tbody>
             </table>
 
-            {/* React Modal */}
-            <Modal
-                isOpen={isReactModalOpen}
-                onRequestClose={() => setIsReactModalOpen(false)}
-                style={customStyles}
-            >
-                <h2>정말 삭제하시겠습니까?</h2>
-                <div
-                    style={{ display: "flex", gap: "10px", marginTop: "20px" }}
-                >
-                    <button onClick={handleDelete}>삭제</button>
-                    <button onClick={() => setIsReactModalOpen(false)}>
-                        취소
-                    </button>
-                </div>
-            </Modal>
-
             {/* Material-UI Modal */}
-            <MuiModal
-                open={isMuiModalOpen}
-                onClose={() => setIsMuiModalOpen(false)}
-            >
+            <MuiModal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <Box sx={style}>
                     <Typography variant="h6" component="h2">
                         정말 삭제하시겠습니까?
@@ -191,7 +138,7 @@ function ProductList() {
                         </Button>
                         <Button
                             variant="outlined"
-                            onClick={() => setIsMuiModalOpen(false)}
+                            onClick={() => setIsModalOpen(false)}
                         >
                             취소
                         </Button>

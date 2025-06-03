@@ -53,3 +53,26 @@ export const createProduct = async (product: Omit<Product, "productId">) => {
         throw error;
     }
 };
+
+export const deleteProduct = async (productId: number) => {
+    try {
+        const response = await axios.delete(
+            `${API_BASE_URL}/api/products/${productId}`,
+            {
+                headers: {
+                    Accept: "application/json",
+                },
+                withCredentials: true,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error("API 에러:", error.response?.data);
+            throw new Error(
+                error.response?.data?.message || "상품 삭제에 실패했습니다."
+            );
+        }
+        throw error;
+    }
+};
