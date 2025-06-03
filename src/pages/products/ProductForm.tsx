@@ -213,11 +213,25 @@ function ProductForm() {
                                     />
                                 </div>
                             )}
-                            <CloudinaryUploadButton
-                                onUpload={handleThumbnailUpload}
-                                buttonText="썸네일 이미지 업로드"
-                                multiple={false}
-                            />
+                            <div className={styles.thumbnailInput}>
+                                <input
+                                    type="text"
+                                    value={product.thumbnail}
+                                    onChange={(e) =>
+                                        setProduct({
+                                            ...product,
+                                            thumbnail: e.target.value,
+                                        })
+                                    }
+                                    placeholder="썸네일 이미지 URL"
+                                    className={styles.formInput}
+                                />
+                                <CloudinaryUploadButton
+                                    onUpload={handleThumbnailUpload}
+                                    buttonText="썸네일 이미지 업로드"
+                                    multiple={false}
+                                />
+                            </div>
                         </div>
                     </div>
                     <div className={styles.formItem}>
