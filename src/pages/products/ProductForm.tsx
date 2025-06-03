@@ -194,7 +194,7 @@ function ProductForm() {
                                     type="text"
                                     value={product.thumbnailName}
                                     onChange={handleInputChange}
-                                    placeholder="썸네일 이미지 원본 파일명"
+                                    placeholder="썸네일 이미지 원본 파일명 "
                                     className={styles.formInput}
                                 />
                                 <CloudinaryUploadButton
