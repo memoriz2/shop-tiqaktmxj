@@ -28,6 +28,7 @@ function ProductForm() {
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [error, setError] = useState<string>("");
     const [isSubmitting] = useState(false);
+    const { productId } = useParams();
     const isEdit = productId;
     const navigate = useNavigate();
 
